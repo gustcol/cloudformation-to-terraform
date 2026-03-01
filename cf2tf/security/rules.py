@@ -86,16 +86,18 @@ def check_ec2_ebs_encryption(properties: Dict[str, Any]) -> bool:
 
 
 def check_sg_unrestricted_ingress(properties: Dict[str, Any]) -> bool:
-    """Check for unrestricted ingress rules (0.0.0.0/0)."""
+    """Check for unrestricted ingress rules (0.0.0.0/0 or ::/0)."""
     ingress = properties.get("SecurityGroupIngress", [])
     for rule in ingress:
         cidr = rule.get("CidrIp", "")
-        if cidr in ["0.0.0.0/0", "::/0"]:
+        cidr_ipv6 = rule.get("CidrIpv6", "")
+        if cidr in ["0.0.0.0/0", "::/0"] or cidr_ipv6 == "::/0":
             from_port = rule.get("FromPort", 0)
             to_port = rule.get("ToPort", 65535)
-            # Check for wide-open ports (not just HTTP/HTTPS)
-            if from_port not in [80, 443] or to_port not in [80, 443]:
-                return True
+            # Allow HTTP (80) and HTTPS (443) single-port rules open to the world
+            if (from_port == 80 and to_port == 80) or (from_port == 443 and to_port == 443):
+                continue
+            return True
     return False
 
 
@@ -151,46 +153,59 @@ def check_rds_deletion_protection(properties: Dict[str, Any]) -> bool:
     return not properties.get("DeletionProtection", False)
 
 
+def _get_policy_documents(properties: Dict[str, Any]) -> list:
+    """Extract all policy documents from IAM properties (Policy or Role)."""
+    docs = []
+    # Direct PolicyDocument (AWS::IAM::Policy, AWS::IAM::ManagedPolicy)
+    if "PolicyDocument" in properties:
+        docs.append(properties["PolicyDocument"])
+    # Inline policies on IAM Roles
+    for policy in properties.get("Policies", []):
+        if isinstance(policy, dict) and "PolicyDocument" in policy:
+            docs.append(policy["PolicyDocument"])
+    return docs
+
+
 def check_iam_wildcard_action(properties: Dict[str, Any]) -> bool:
     """Check for IAM policies with wildcard actions."""
-    policy = properties.get("PolicyDocument", {})
-    statements = policy.get("Statement", [])
-    for stmt in statements:
-        actions = stmt.get("Action", [])
-        if isinstance(actions, str):
-            actions = [actions]
-        if "*" in actions or any(a.endswith(":*") for a in actions):
-            return True
+    for policy in _get_policy_documents(properties):
+        statements = policy.get("Statement", [])
+        for stmt in statements:
+            actions = stmt.get("Action", [])
+            if isinstance(actions, str):
+                actions = [actions]
+            if "*" in actions or any(a.endswith(":*") for a in actions):
+                return True
     return False
 
 
 def check_iam_wildcard_resource(properties: Dict[str, Any]) -> bool:
     """Check for IAM policies with wildcard resources."""
-    policy = properties.get("PolicyDocument", {})
-    statements = policy.get("Statement", [])
-    for stmt in statements:
-        resources = stmt.get("Resource", [])
-        if isinstance(resources, str):
-            resources = [resources]
-        if "*" in resources:
-            return True
+    for policy in _get_policy_documents(properties):
+        statements = policy.get("Statement", [])
+        for stmt in statements:
+            resources = stmt.get("Resource", [])
+            if isinstance(resources, str):
+                resources = [resources]
+            if "*" in resources:
+                return True
     return False
 
 
 def check_iam_admin_policy(properties: Dict[str, Any]) -> bool:
     """Check for IAM policies that grant admin access."""
-    policy = properties.get("PolicyDocument", {})
-    statements = policy.get("Statement", [])
-    for stmt in statements:
-        effect = stmt.get("Effect", "")
-        actions = stmt.get("Action", [])
-        resources = stmt.get("Resource", [])
-        if isinstance(actions, str):
-            actions = [actions]
-        if isinstance(resources, str):
-            resources = [resources]
-        if effect == "Allow" and "*" in actions and "*" in resources:
-            return True
+    for policy in _get_policy_documents(properties):
+        statements = policy.get("Statement", [])
+        for stmt in statements:
+            effect = stmt.get("Effect", "")
+            actions = stmt.get("Action", [])
+            resources = stmt.get("Resource", [])
+            if isinstance(actions, str):
+                actions = [actions]
+            if isinstance(resources, str):
+                resources = [resources]
+            if effect == "Allow" and "*" in actions and "*" in resources:
+                return True
     return False
 
 
@@ -280,9 +295,9 @@ def check_vpc_flow_logs(properties: Dict[str, Any]) -> bool:
 
 
 def check_api_gateway_logging(properties: Dict[str, Any]) -> bool:
-    """Check if API Gateway has logging enabled."""
-    # Stage-level check
-    return not properties.get("TracingEnabled", False)
+    """Check if API Gateway stage has access logging enabled."""
+    access_log = properties.get("AccessLogSetting", {})
+    return not access_log.get("DestinationArn", "")
 
 
 # All security rules organized by service
@@ -343,7 +358,7 @@ SECURITY_RULES: List[Dict[str, Any]] = [
         "references": ["https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html"],
     },
     {
-        "id": "CKV_AWS_18",
+        "id": "CKV_AWS_66",
         "title": "S3 Bucket Logging",
         "description": "S3 bucket should have access logging enabled for audit and compliance purposes.",
         "severity": "MEDIUM",

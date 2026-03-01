@@ -82,10 +82,10 @@ RESOURCE_TYPE_MAPPING: Dict[str, str] = {
     "AWS::EC2::IPAMScope": "aws_vpc_ipam_scope",
     "AWS::EC2::IPAMAllocation": "aws_vpc_ipam_pool_cidr_allocation",
     "AWS::EC2::IPAMPoolCidr": "aws_vpc_ipam_pool_cidr",
-    "AWS::EC2::EnclaveCertificateIamRoleAssociation": "aws_acm_certificate",
+    "AWS::EC2::EnclaveCertificateIamRoleAssociation": "aws_ec2_enclave_certificate_iam_role_association",
     "AWS::EC2::NetworkInsightsPath": "aws_ec2_network_insights_path",
     "AWS::EC2::NetworkInsightsAnalysis": "aws_ec2_network_insights_analysis",
-    "AWS::EC2::NetworkInsightsAccessScope": "aws_ec2_network_insights_path",
+    "AWS::EC2::NetworkInsightsAccessScope": "aws_ec2_network_insights_access_scope",
     "AWS::EC2::InstanceConnectEndpoint": "aws_ec2_instance_connect_endpoint",
 
     # Auto Scaling
@@ -178,7 +178,7 @@ RESOURCE_TYPE_MAPPING: Dict[str, str] = {
 
     # Secrets Manager
     "AWS::SecretsManager::Secret": "aws_secretsmanager_secret",
-    "AWS::SecretsManager::SecretTargetAttachment": "aws_secretsmanager_secret_version",
+    "AWS::SecretsManager::SecretTargetAttachment": "aws_secretsmanager_secret_rotation",
 
     # SSM
     "AWS::SSM::Parameter": "aws_ssm_parameter",
@@ -271,7 +271,7 @@ RESOURCE_TYPE_MAPPING: Dict[str, str] = {
 
     # Firewall Manager
     "AWS::FMS::Policy": "aws_fms_policy",
-    "AWS::FMS::NotificationChannel": "aws_fms_admin_account",
+    "AWS::FMS::NotificationChannel": "aws_fms_notification_channel",
 
     # ElastiCache
     "AWS::ElastiCache::CacheCluster": "aws_elasticache_cluster",
@@ -342,9 +342,7 @@ RESOURCE_TYPE_MAPPING: Dict[str, str] = {
     "AWS::CloudFormation::Stack": "module",
     "AWS::CloudFormation::StackSet": "module",
 
-    # EventBridge
-    "AWS::Events::Rule": "aws_cloudwatch_event_rule",
-    "AWS::Events::EventBus": "aws_cloudwatch_event_bus",
+    # EventBridge (additional)
     "AWS::Scheduler::Schedule": "aws_scheduler_schedule",
 
     # AppSync
@@ -466,12 +464,6 @@ RESOURCE_TYPE_MAPPING: Dict[str, str] = {
     "AWS::DirectConnect::VirtualInterface": "aws_dx_private_virtual_interface",
     "AWS::DirectConnect::Gateway": "aws_dx_gateway",
     "AWS::DirectConnect::GatewayAssociation": "aws_dx_gateway_association",
-
-    # VPN
-    "AWS::EC2::VPNConnection": "aws_vpn_connection",
-    "AWS::EC2::VPNGateway": "aws_vpn_gateway",
-    "AWS::EC2::CustomerGateway": "aws_customer_gateway",
-    "AWS::EC2::VPNConnectionRoute": "aws_vpn_connection_route",
 
     # Network Firewall
     "AWS::NetworkFirewall::Firewall": "aws_networkfirewall_firewall",

@@ -6,7 +6,7 @@ with security recommendations based on best practices and Checkov,
 plus performance optimization suggestions.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "CF2TF Team"
 
 from cf2tf.converter import CloudFormationConverter

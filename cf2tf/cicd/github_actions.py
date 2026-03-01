@@ -190,7 +190,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Infracost
-        uses: infracost/actions/setup@v3
+        uses: infracost/actions/setup@v2
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
 
@@ -208,7 +208,7 @@ jobs:
             --out-file /tmp/infracost.json
 
       - name: Post Infracost comment
-        uses: infracost/actions/comment@v1
+        uses: infracost/actions/comment@v2
         with:
           path: /tmp/infracost.json
           behavior: update
