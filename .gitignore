@@ -8,6 +8,4 @@ build/
 .env
 .pytest_cache/
 *.egg
-.claude/
-.serena/
 terraform_output/
