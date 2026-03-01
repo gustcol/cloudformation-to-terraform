@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="cf2tf",
-    version="1.0.0",
+    version="1.1.0",
     author="CloudFormation to Terraform Converter",
     description="A comprehensive framework to migrate AWS CloudFormation templates to Terraform with security and performance recommendations",
     long_description=long_description,
@@ -22,14 +22,14 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Software Development :: Code Generators",
         "Topic :: System :: Systems Administration",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     install_requires=requirements,
     entry_points={
         "console_scripts": [

@@ -1,6 +1,6 @@
 # CF2TF - CloudFormation to Terraform Migration Framework
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A comprehensive enterprise-grade framework to migrate AWS CloudFormation templates to Terraform, with built-in security analysis based on Checkov rules, compliance checks (SOC2, HIPAA, PCI-DSS), performance optimization recommendations, and production-ready CI/CD pipelines.
@@ -9,7 +9,7 @@ A comprehensive enterprise-grade framework to migrate AWS CloudFormation templat
 
 ### Core Capabilities
 - **Complete Template Conversion**: Convert CloudFormation YAML/JSON templates to Terraform HCL
-- **666+ Resource Types Supported**: 616 AWS resources + 50 Databricks resources
+- **770+ Resource Types Supported**: 616 AWS resources + 156 Databricks resources
 - **Security Analysis**: 88 security checks based on Checkov rules and AWS best practices
 - **Compliance Frameworks**: SOC2, HIPAA, PCI-DSS control validation
 - **Performance Recommendations**: Actionable performance optimization suggestions
@@ -70,15 +70,12 @@ pip install cf2tf
 
 ### Requirements
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - Dependencies (automatically installed):
   - pyyaml
   - click
-  - jinja2
-  - boto3
   - checkov
   - colorama
-  - tabulate
 
 ## Quick Start
 

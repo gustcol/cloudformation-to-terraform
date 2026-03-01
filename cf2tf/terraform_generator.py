@@ -284,8 +284,8 @@ locals {''']
         for mapping_name, mapping_data in self.mappings.items():
             tf_name = self._to_terraform_name(mapping_name)
             formatted = json.dumps(mapping_data, indent=4)
-            # Convert JSON to HCL-style
-            formatted = formatted.replace('": ', " = ").replace('"', "")
+            # Convert JSON to HCL-style: replace ": " with " = " but keep quotes on values
+            formatted = formatted.replace('": ', '" = ')
             lines.append(f"  {tf_name} = {formatted}")
 
         lines.append("}")
